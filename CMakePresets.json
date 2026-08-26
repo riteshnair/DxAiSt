@@ -1,0 +1,56 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-core",
+      "displayName": "DxAiSt Windows core DLLs",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/windows-core",
+      "cacheVariables": {
+        "DXAIT_BUILD_LEGACY": "OFF",
+        "DXAIT_BUILD_REVAMP_CORE": "ON",
+        "DXAIT_BUILD_CORE_TESTS": "ON"
+      }
+    },
+    {
+      "name": "windows-inventory",
+      "displayName": "DxAiSt Windows legacy inventory",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/windows-inventory",
+      "cacheVariables": {
+        "DXAIT_BUILD_LEGACY": "ON",
+        "DXAIT_BUILD_REVAMP_CORE": "ON",
+        "DXAIT_BUILD_CORE_TESTS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-core-release",
+      "configurePreset": "windows-core",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-inventory-release",
+      "configurePreset": "windows-inventory",
+      "configuration": "Release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-core-tests",
+      "configurePreset": "windows-core",
+      "configuration": "Release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
