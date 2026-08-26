@@ -112,8 +112,10 @@ DXAIT_C_API void DXAIT_C_CALL dx_buffer_unmap(dx_buffer* buffer);
 DXAIT_C_API uint64_t DXAIT_C_CALL dx_buffer_size(const dx_buffer* buffer);
 DXAIT_C_API void* DXAIT_C_CALL dx_buffer_native_resource(const dx_buffer* buffer);
 
-// Transfers are direct mapped copies for host-visible allocations. Default
-// buffers require a future command-copy implementation and return UNSUPPORTED.
+// Transfers use direct mapped copies for host-visible allocations. On Windows,
+// default buffers use synchronized temporary upload/readback resources; on the
+// portable reference host, allocations are host-visible. Unsupported failures
+// are reported explicitly through dx_c_status_t.
 DXAIT_C_API int32_t DXAIT_C_CALL dx_upload(
     dx_device* device,
     dx_buffer* destination,
