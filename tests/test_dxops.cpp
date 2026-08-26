@@ -20,6 +20,7 @@ int main() {
     assert(dx_op_fill_f32(copied, 4u, 7.0f) == 0);
     for (float value : copied) {
         assert(value == 7.0f);
+        (void) value;
     }
 
     const float a[4] = {1.0f, 2.0f, 3.0f, 4.0f};

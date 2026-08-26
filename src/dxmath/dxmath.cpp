@@ -254,13 +254,16 @@ uint32_t MathOps::sample(
     const SamplingParams& params
 ) {
     (void)queue; (void)params;
-    // ponytail: CPU readback sampling fallback; upgrade to GPU top-K/top-P kernels for latency sensitive decode
-    uint64_t bytes = vocab_size * sizeof(float);
-    auto readback = m_device->create_buffer(bytes, MemLocation::Readback);
-
-    // Copy logits to readback (lazy sync for now)
-    // In a real app we'd use the provided queue and a fence
-    float* ptr = static_cast<float*>(readback->map());
+    // CPU sampling fallback. The caller must provide a host-visible logits
+    // buffer; native default-heap readback requires an explicit copy path.
+    const uint64_t bytes = static_cast<uint64_t>(vocab_size) * sizeof(float);
+    if (logits_buf == nullptr || vocab_size == 0u || logits_buf->size() < bytes) {
+        return 0u;
+    }
+    float* ptr = static_cast<float*>(logits_buf->map());
+    if (ptr == nullptr) {
+        return 0u;
+    }
     uint32_t max_idx = 0;
     float max_val = -1e30f;
     for (uint32_t i = 0; i < vocab_size; ++i) {
@@ -269,7 +272,7 @@ uint32_t MathOps::sample(
             max_idx = i;
         }
     }
-    readback->unmap();
+    logits_buf->unmap();
     return max_idx;
 }
 

@@ -18,6 +18,7 @@ void set_environment(const char* name, const char* value) {
     const int result = setenv(name, value, 1);
 #endif
     assert(result == 0);
+    (void) result;
 }
 
 void clear_environment(const char* name) {
@@ -27,6 +28,7 @@ void clear_environment(const char* name) {
     const int result = unsetenv(name);
 #endif
     assert(result == 0);
+    (void) result;
 }
 
 } // namespace
@@ -43,6 +45,7 @@ int main() {
     assert(dx_component_logger_create("dxcore", &logger) == 0);
     assert(logger != nullptr);
     const uint32_t modes = dx_component_logger_modes(logger);
+    (void) modes;
     assert((modes & DX_COMPONENT_LOG_DEBUG) != 0u);
     assert((modes & DX_COMPONENT_LOG_TRACE) != 0u);
     assert((modes & DX_COMPONENT_LOG_PERF) == 0u);

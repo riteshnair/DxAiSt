@@ -30,12 +30,14 @@ int main() {
 
     bool connected_insecure = net_transport.connect_to_server("192.168.1.101", 9090);
     assert(connected_insecure);
+    (void) connected_insecure;
 
     constexpr uint64_t tensor_bytes = 64ULL * 1024ULL * 1024ULL; // 64 MB
     auto upload_buf = device->create_buffer(tensor_bytes, dxait::MemLocation::Upload);
 
     bool sent_insecure = net_transport.send_tensor(1, upload_buf.get(), tensor_bytes);
     assert(sent_insecure);
+    (void) sent_insecure;
     std::cout << "   Insecure Raw DMA Stream Verified!\n\n";
 
     // 2. Test Secure AES-256-GCM / HMAC Auth Token Mode
@@ -53,12 +55,15 @@ int main() {
 
     bool auth_success = net_transport.authenticate_node(1, dxait::SecurityEngine::generate_auth_token("DXAiT-Cluster-Secret-2026", "RemoteServerNode"));
     assert(auth_success);
+    (void) auth_success;
 
     bool sent_secure = net_transport.send_tensor(1, upload_buf.get(), tensor_bytes);
     assert(sent_secure);
+    (void) sent_secure;
 
     bool recv_secure = net_transport.recv_tensor(1, upload_buf.get(), tensor_bytes);
     assert(recv_secure);
+    (void) recv_secure;
 
     std::cout << "\n========================================================\n";
     std::cout << " Secure & Insecure DirectX Network Transport Test PASSED!\n";

@@ -288,7 +288,7 @@ int32_t execute_buffer_copy(dx_memory_pool_t* pool,
 
     allocation->state = prior_state;
     if (!upload) {
-        const void* mapped = nullptr;
+        void* mapped = nullptr;
         if (FAILED(staging->Map(0u, nullptr, &mapped)) || mapped == nullptr) {
             return -12;
         }

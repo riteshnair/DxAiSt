@@ -135,8 +135,10 @@ DXAIT_RUNTIME_API int32_t DXAIT_RUNTIME_CALL dx_runtime_get_info(
                                 ? DX_COMPONENT_LOG_NONE
                                 : dx_component_logger_modes(runtime->logger);
     out_info->device_count = dx_device_manager_count(runtime->devices);
-    std::strncpy(out_info->backend_name, runtime->backend_name.c_str(),
-                 sizeof(out_info->backend_name) - 1u);
+    const size_t copy_size = (std::min)(runtime->backend_name.size(),
+                                         sizeof(out_info->backend_name) - 1u);
+    std::memcpy(out_info->backend_name, runtime->backend_name.data(), copy_size);
+    out_info->backend_name[copy_size] = '\0';
     return 0;
 }
 

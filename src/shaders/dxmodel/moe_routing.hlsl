@@ -1,8 +1,8 @@
 // Mixture of Experts (MoE) Top-k Softmax Gating Router
 
 RWStructuredBuffer<uint> g_selected_experts : register(u0);
-RWStructuredBuffer<float> g_expert_weights : register(t0);
-StructuredBuffer<float> g_gate_logits : register(t1);
+RWStructuredBuffer<float> g_expert_weights : register(u1);
+StructuredBuffer<float> g_gate_logits : register(t0);
 
 cbuffer MoECB : register(b0) {
     uint g_num_tokens;

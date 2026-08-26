@@ -24,6 +24,8 @@ int main() {
     assert(dx_model_size(model) == 8u);
     char buffer[8]{};
     uint64_t bytes = 0u;
+    (void) buffer;
+    (void) bytes;
     assert(dx_model_read(model, 4u, buffer, 4u, &bytes) == 0);
     assert(bytes == 4u && std::memcmp(buffer, "data", 4u) == 0);
     assert(dx_model_read(model, 99u, buffer, 4u, &bytes) == 1);

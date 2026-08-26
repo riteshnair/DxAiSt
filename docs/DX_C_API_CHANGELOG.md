@@ -43,3 +43,20 @@
 ## Completion state
 
 The versioned C API compatibility slice and source-side staging/adapter hardening are **implemented and portable-tested**. The `dx12_dxcapi.dll` component remains **in progress** until Windows runtime, DLL export/import-library, lifecycle failure, shader-artifact, and GPU/real-device gates pass.
+
+## Record 004 - Windows/MSVC build-error cleanup from x2.txt
+
+| Field | Value |
+|---|---|
+| Files | `src/shaders/dxmodel/moe_routing.hlsl`, `src/core/dx_shader_api.cpp`, `include/dxait/dxjit.hpp`, `src/core/dx_memory_api.cpp`, `src/core/dx_device_api.cpp`, `src/core/dx_graph_api.cpp`, `src/core/dx_runtime_api.cpp`, `src/dxmath/dxmath.cpp`, and affected tests |
+| Root fixes | Corrected the MoE UAV/SRV register classes (`u1` and `t0`); placed Windows/COM headers before `dxcapi.h`; changed the D3D12 readback `Map` output to `void*`; added explicit Windows header coverage for device conversion APIs. |
+| Warning cleanup | Replaced deprecated `strncpy`/`wcstombs` uses with bounded copies/`WideCharToMultiByte`; replaced deprecated test `getenv` calls with a bounded environment helper; added explicit uses for Release-only assertion variables and unused parameters. |
+| Additional correctness fix | `MathOps::sample` now validates and maps the caller-provided logits buffer rather than reading from an uninitialized temporary readback allocation. |
+| Portable evidence | Fresh DxAiSt configure/build completed; all 15 portable CTest tests passed; `git diff --check` passed. |
+| Windows evidence | MSVC/DXC/DirectStorage execution is not available in the Linux sandbox. The source fixes target the exact x2 diagnostics and require confirmation on the user’s Windows build. |
+| Rollback | Revert Record 004 or restore the listed files from commit `14969e7`; rerun the clean build and test commands. |
+| Status | `source-fixed and portable-tested; Windows compiler/runtime confirmation pending` |
+
+## Updated completion state
+
+The reported x2 source root causes have been fixed in the current DxAiSt tree. Portable validation is green. Native Windows validation remains a required gate because the sandbox cannot invoke MSVC, DXC, DirectStorage, or D3D12 runtime code.

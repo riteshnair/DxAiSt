@@ -13,6 +13,7 @@
 #include <vector>
 
 #ifdef _WIN32
+#include <windows.h>
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -63,9 +64,10 @@ void initialize_cpu_info(dx_device_info_t& info) {
     info.struct_size = sizeof(info);
     info.api_version = kApiVersion;
     info.backend = DX_DEVICE_BACKEND_CPU;
-    info.capabilities = DX_DEVICE_CAP_CPU_REFERENCE;
+    info.capabilities = static_cast<uint32_t>(DX_DEVICE_CAP_CPU_REFERENCE);
     info.is_software = 1u;
-    std::strncpy(info.name, "CPU reference backend", sizeof(info.name) - 1u);
+    constexpr char kName[] = "CPU reference backend";
+    std::memcpy(info.name, kName, sizeof(kName));
 }
 
 #ifdef _WIN32
@@ -108,12 +110,16 @@ void append_dxgi_adapters(dx_device_manager_t& manager) {
         info.backend = DX_DEVICE_BACKEND_DX12;
         info.vendor_id = description.VendorId;
         info.device_id = description.DeviceId;
-        info.capabilities = DX_DEVICE_CAP_COMPUTE | DX_DEVICE_CAP_FP16;
+        info.capabilities = static_cast<uint32_t>(DX_DEVICE_CAP_COMPUTE | DX_DEVICE_CAP_FP16);
         info.dedicated_video_memory = description.DedicatedVideoMemory;
         info.dedicated_system_memory = description.DedicatedSystemMemory;
         info.shared_system_memory = description.SharedSystemMemory;
-        std::wcstombs(info.name, description.Description, sizeof(info.name) - 1u);
-        info.name[sizeof(info.name) - 1u] = '\0';
+        const int converted = WideCharToMultiByte(
+            CP_UTF8, 0, description.Description, -1, info.name,
+            static_cast<int>(sizeof(info.name)), nullptr, nullptr);
+        if (converted <= 0) {
+            info.name[0] = '\0';
+        }
         manager.devices.push_back(info);
         manager.adapters.push_back(adapter);
     }

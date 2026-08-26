@@ -261,8 +261,7 @@ DXAIT_GRAPH_API int32_t DXAIT_GRAPH_CALL dx_plan_node_at(
         return -2;
     }
     *out_node_id = node_id;
-    std::strncpy(operator_name, iterator->second.c_str(), operator_name_capacity - 1u);
-    operator_name[operator_name_capacity - 1u] = '\0';
+    std::memcpy(operator_name, iterator->second.c_str(), iterator->second.size() + 1u);
     return 0;
 }
 

@@ -71,6 +71,7 @@ int main() {
     dxait::ModelLoader loader;
     bool parsed = loader.parse_gguf("nonexistent.gguf");
     assert(!parsed && "Graceful non-existent GGUF handle check");
+    (void) parsed;
 
     std::cout << "DXAiT Full SDK Execution (Math Ops + RMSNorm + Softmax + Scheduler) Passed Perfectly!\n";
     return 0;

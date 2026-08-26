@@ -20,11 +20,26 @@
 #include <cstring>
 #include <cstdio>
 #include <atomic>
+#include <cstdlib>
 
 using namespace dxait;
 using clock_ = std::chrono::steady_clock;
 
 namespace {
+
+std::string environment_value(const char* name, const char* fallback) {
+#ifdef _WIN32
+    char buffer[32768]{};
+    const DWORD length = GetEnvironmentVariableA(name, buffer, static_cast<DWORD>(sizeof(buffer)));
+    if (length > 0u && length < sizeof(buffer)) {
+        return std::string(buffer, length);
+    }
+    return fallback;
+#else
+    const char* value = std::getenv(name);
+    return value == nullptr ? std::string(fallback) : std::string(value);
+#endif
+}
 
 std::string ws(const std::wstring& w) {
     int n = WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, nullptr, 0, nullptr, nullptr);
@@ -135,6 +150,7 @@ int scenario_on_demand(DirectStorageContext* ds, StreamingMoE& smoe, uint64_t pa
 // much smaller than working set; stall logging from in-flight victims.
 int scenario_eviction(DirectStorageContext* ds, StreamingMoE& smoe, uint32_t slots,
                       uint32_t working_set, uint32_t tokens) {
+    (void) ds;
     std::cout << "\n=== SCENARIO: ring eviction under contention (slots=" << slots
               << ", working_set=" << working_set << ", tokens=" << tokens << ") ===\n";
     std::mt19937 rng(0xABC);
@@ -277,7 +293,7 @@ int main(int argc, char** argv) {
               << " async_prefetch=" << (Config::is_async_prefetch_enabled() ? "on" : "off") << "\n";
 
     constexpr uint32_t k_alignment = 4096;
-    const std::string tmp = std::string(std::getenv("TEMP") ? std::getenv("TEMP") : ".") + "/dxstream-test";
+    const std::string tmp = environment_value("TEMP", ".") + "/dxstream-test";
     std::string payload;
     TensorIndex idx;
     std::vector<std::string> tags;
@@ -303,8 +319,8 @@ int main(int argc, char** argv) {
     // BypassIO mode is process-global, one-shot: choose it before constructing
     // any DirectStorageContext. A/B comparison = run the exe twice, once with
     // DXAIT_DSTORAGE_DISABLE_BYPASSIO unset, once =1.
-    const char* bypass_env = getenv("DXAIT_DSTORAGE_DISABLE_BYPASSIO");
-    bool bypassio_enabled = !(bypass_env && strcmp(bypass_env, "1") == 0);
+    const std::string bypass_env = environment_value("DXAIT_DSTORAGE_DISABLE_BYPASSIO", "");
+    bool bypassio_enabled = bypass_env != "1";
     std::cout << "\n[BYPASSIO CONFIG] process mode="
               << (bypassio_enabled ? "ENABLED" : "DISABLED (DXAIT_DSTORAGE_DISABLE_BYPASSIO=1)") << "\n";
 

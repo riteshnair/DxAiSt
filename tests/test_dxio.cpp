@@ -28,6 +28,8 @@ int main() {
 
     char buffer[8]{};
     uint64_t bytes = 0u;
+    (void) buffer;
+    (void) bytes;
     assert(dx_io_read_file(provider, path, 1u, buffer, 3u, &bytes) == 0);
     assert(bytes == 3u && std::memcmp(buffer, "bcd", 3u) == 0);
     assert(dx_io_read_file(provider, path, 4u, buffer, 8u, &bytes) == 0);

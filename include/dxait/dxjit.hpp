@@ -1,8 +1,12 @@
 #ifndef DXAIT_DXJIT_HPP
 #define DXAIT_DXJIT_HPP
 
-#include "dxait.hpp"
+#ifdef _WIN32
+#include <windows.h>
 #include <dxcapi.h>
+#endif
+
+#include "dxait.hpp"
 
 #include <string>
 #include <unordered_map>

@@ -13,9 +13,9 @@
 #include <vector>
 
 #ifdef _WIN32
-#include <dxcapi.h>
 #include <windows.h>
 #include <wrl/client.h>
+#include <dxcapi.h>
 #endif
 
 struct dx_shader_blob_t {

@@ -10,6 +10,8 @@ static float cpu_attention_one(
     uint32_t seq, uint32_t dim, uint32_t i, uint32_t kv_head, uint32_t q_head,
     uint32_t n_qh, uint32_t n_kvh, bool causal, uint32_t window, float scale)
 {
+    (void) n_qh;
+    (void) n_kvh;
     float max_s = -1e30f;
     for (uint32_t j = 0; j < seq; ++j) {
         if (causal && j > i) break;

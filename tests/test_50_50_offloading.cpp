@@ -45,6 +45,7 @@ int main() {
     assert(ram_ptr != nullptr && "RAM buffer mapping succeeded");
 
     constexpr uint64_t num_floats = partition_bytes / sizeof(float);
+    (void) num_floats;
     for (uint64_t i = 0; i < 1000; ++i) {
         ram_ptr[i] = static_cast<float>(i) * 3.14159f;
     }
